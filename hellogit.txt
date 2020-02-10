@@ -1,0 +1,162 @@
+打开gitBash
+进入要创建git仓库的盘符，例如d盘
+
+19548@DESKTOP-I6VDM18 MINGW64 ~
+$ cd d:
+
+19548@DESKTOP-I6VDM18 MINGW64 /d
+$ mkdir git(创建一个未来的仓库目录）
+
+$ cd git(进入这个git目录）
+
+19548@DESKTOP-I6VDM18 MINGW64 /d/git
+$ git init 创建git仓库
+Initialized empty Git repository in D:/git/.git/
+
+用Notepad++编辑一个hellogit.txt文本
+第一步：$ git add hellogit.txt（用命令git add告诉Git，把文件添加到仓库）
+第二步：$ git commit -m "wrote a readme file"（用命令git commit告诉Git，把文件提交到仓库，-m后面输入的是本次提交的说明，可以输入任意内容）
+
+$ git status（git status命令看看结果）
+On branch master
+Changes not staged for commit:
+  (use "git add <file>..." to update what will be committed)
+  (use "git restore <file>..." to discard changes in working directory)
+        modified:   hellogit.txt
+
+no changes added to commit (use "git add" and/or "git commit -a")
+git status命令可以让我们时刻掌握仓库当前的状态，上面的命令输出告诉我们，readme.txt被修改过了，但还没有准备提交的修改。
+
+$ git diff hellogit.txt（git diff顾名思义就是查看修改的内容，修改的没什么问题就可以提交了）
+diff --git a/hellogit.txt b/hellogit.txt
+index 99e0e11..9dfc4d0 100644
+--- a/hellogit.txt
++++ b/hellogit.txt
+@@ -1,2 +1,18 @@
+ Git is a distributed version control system.
+-Git is free software distributed under the GPL.
+\ No newline at end of file
++Git is free software distributed under the GPL.
+
+$git add hellogit.txt(添加到仓库）
+
+git commit之前，我们再运行git status看看当前仓库的状态
+$git status
+On branch master
+Changes to be committed:
+  (use "git restore --staged <file>..." to unstage)
+        modified:   hellogit.txt
+(git status告诉我们,将要被提交的修改包括readme.txt，下一步，就可以放心地提交了)
+
+$ git commit -m "git使用说明"
+[master 9813ff6] git使用说明
+ 1 file changed, 41 insertions(+), 2 deletions(-)
+ rewrite hellogit.txt (100%)
+ (提交完成，插入了41行，删除了2行）
+ 
+$ git status（提交完了，我们再看下状态，状态提示为工作目录是干净（working tree clean）的）
+On branch master
+nothing to commit, working tree clean
+
+$git log (查看从最近到最远的提交日志）
+commit dca17cbbbddeaf65b8a883ca4ddf7c23be005b4b (HEAD -> master)
+Author: lijiajin1228 <19548915@qq.com>
+Date:   Sun Feb 9 23:37:53 2020 +0800
+
+    git使用说明-状态查询
+
+commit 9813ff65d5311a54c5ac8d246d9fb3edd7b10dbf
+Author: lijiajin1228 <19548915@qq.com>
+Date:   Sun Feb 9 23:34:00 2020 +0800
+
+    git使用说明
+
+commit 5aea7e88b5b272a3f47a94c2f8a5bca2b51bd8b3
+Author: lijiajin1228 <19548915@qq.com>
+Date:   Sun Feb 9 22:56:50 2020 +0800
+
+    append GPL
+
+commit 468a800a3bf472682c5b0ddd3a2ccff8969df804
+Author: lijiajin1228 <19548915@qq.com>
+Date:   Sun Feb 9 22:53:45 2020 +0800
+
+    wrote a readme file
+	
+$git log --pretty=oneline（如果嫌输出信息太多，看得眼花缭乱的，可以试试加上--pretty=oneline参数）
+dca17cbbbddeaf65b8a883ca4ddf7c23be005b4b (HEAD -> master) git使用说明-状态查询
+9813ff65d5311a54c5ac8d246d9fb3edd7b10dbf git使用说明
+5aea7e88b5b272a3f47a94c2f8a5bca2b51bd8b3 append GPL
+468a800a3bf472682c5b0ddd3a2ccff8969df804 wrote a readme file
+
+$ git reset --hard HEAD^（上一个版本就是HEAD^，上上一个版本就是HEAD^^，当然往上100个版本写100个^比较容易数不过来，所以写成HEAD~100）
+HEAD is now at 1a2d3b7 git使用说明-回滚
+
+$git reset --hard 一个版本串号（这样就可以回到你要的那个版本，前提是你要能git log的时候能记住commit id的串号）
+
+****有一种情况比较常见，就是版本回退的时候发现错误，但也找不到commit id的串号，这时候用git reflog它会记录你的每一次命令，每行的头部一串数字代码就是commit id的串号
+$ git reflog                                                                                                            
+34f1039 (HEAD -> master) HEAD@{0}: reset: moving to 34f10                                                               
+468a800 HEAD@{1}: reset: moving to 468a800a3bf472682c5b0ddd3a2ccff8969df804                                             
+34f1039 (HEAD -> master) HEAD@{2}: reset: moving to HEAD^                                                               
+3ff0c80 HEAD@{3}: commit: git123                                                                                        
+34f1039 (HEAD -> master) HEAD@{4}: commit: git使用说明-回滚1                                                            
+dca17cb HEAD@{5}: reset: moving to HEAD^                                                                                
+1a2d3b7 HEAD@{6}: reset: moving to HEAD^                                                                                
+d31437f HEAD@{7}: commit: git                                                                                           
+1a2d3b7 HEAD@{8}: commit: git使用说明-回滚
+dca17cb HEAD@{9}: commit: git使用说明-状态查询
+9813ff6 HEAD@{10}: commit: git使用说明
+5aea7e8 HEAD@{11}: commit: append GPL
+468a800 HEAD@{12}: commit (initial): wrote a readme file
+
+如果发现文件修改的有问题，只要没有提交commit，可以从暂存区add撤销，再撤销工作区的文件checkout，例如
+$ git restore --staged hellogit.txt（从暂存区撤销修改）或者$ git reset HEAD hellogit.txt都可以
+
+看下暂存区和工作区的状态
+$ git status
+On branch master
+Changes not staged for commit:
+  (use "git add <file>..." to update what will be committed)
+  (use "git restore <file>..." to discard changes in working directory)
+        modified:   hellogit.txt
+
+no changes added to commit (use "git add" and/or "git commit -a")
+通过状态可以看出，在staged暂存区已经没有了，但在working工作区目录，修改文件还存在，接着就可以用checkout再把工作区复原
+
+复原工作区
+$ git checkout -- hellogit.txt
+再看下状态
+$ git status                                                                                                            
+On branch master
+nothing to commit, working tree clean
+可以看出工作区已经复原，暂存区staged没有文件被添加
+
+*************删除已经添加到暂存库且提交过文件
+rm test.txt（本地直接删除，再通过git status查看）
+$ git status
+On branch master
+Changes not staged for commit:
+  (use "git add/rm <file>..." to update what will be committed)
+  (use "git restore <file>..." to discard changes in working directory)
+        deleted:    test.txt
+
+no changes added to commit (use "git add" and/or "git commit -a")
+
+可以看出git知道工作区的test.txt文件被删除了，如果是确实要从版本库删除用git的提示命令:git rm test.txt，且提交
+$ git rm test.txt                                                                                                       
+rm 'test.txt'
+再从版本库删除
+$ git commit -m "remove test.txt"
+[master 2cf2fc5] remove test.txt
+ 1 file changed, 2 deletions(-)
+ delete mode 100644 test.txt           
+
+另一种情况是删错了，因为版本库里还有呢，所以可以很轻松地把误删的文件恢复到最新版本： 
+$ git checkout -- test.txt
+git checkout其实是用版本库里的版本替换工作区的版本，无论工作区是修改还是删除，都可以“一键还原”。
+
+
+
+
+
